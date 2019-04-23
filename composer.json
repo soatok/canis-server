@@ -1,0 +1,42 @@
+{
+    "name": "soatok/canis-server",
+    "description": "Server-side component for Project Canis",
+    "keywords": ["registry"],
+    "homepage": "http://github.com/soatok/canis-server",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "Soatok Dreamseeker",
+            "email": "soatok.dhole@gmail.com",
+            "homepage": "https://soatok.com"
+        }
+    ],
+    "require": {
+        "php": "^7.3",
+        "soatok/dhole-cryptography": "^1",
+        "monolog/monolog": "^1.17",
+        "slim/slim": "^3.1",
+        "twig/twig": "^2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Soatok\\Canis\\": "src/Canis/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Soatok\\Canis\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "scripts": {
+        "start": "php -S localhost:8080 -t public",
+        "test": "phpunit"
+    }
+}
