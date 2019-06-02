@@ -3,6 +3,7 @@
 use Slim\App;
 use Slim\Container;
 use ParagonIE\CSPBuilder\CSPBuilder;
+use ParagonIE\EasyDB\Factory;
 use Soatok\Canis\Utility;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -12,6 +13,16 @@ return function (App $app) {
 
     $container['csp'] = function (Container $c) {
         return CSPBuilder::fromFile(__DIR__ . '/content_security_policy.json');
+    };
+
+    $container['db'] = function (Container $c) {
+        $settings = $c->get('settings')['database'];
+        return Factory::create(
+            $settings['dsn'],
+            $settings['username'] ?? '',
+            $settings['password'] ?? '',
+            $settings['options'] ?? []
+        );
     };
 
     // monolog

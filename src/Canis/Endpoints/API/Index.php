@@ -15,7 +15,8 @@ class Index extends Endpoint
     public function __invoke(RequestInterface $request): ResponseInterface
     {
         return $this->json([
-            'test' => 'hello world'
+            'test' => 'hello world',
+            'test2' => get_class($this->splice('Accounts'))
         ]);
     }
 }

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Soatok\Canis;
 
+use Interop\Container\Exception\ContainerException;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -11,6 +12,9 @@ use Slim\Http\Response;
 use Slim\Http\StatusCode;
 use Slim\Http\Stream;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /**
  * Class Endpoint
@@ -24,10 +28,13 @@ abstract class Endpoint
     /** @var CSPBuilder $cspBuilder */
     protected $cspBuilder;
 
+    /** @var array<string, Splice> $splices */
+    protected $splices = [];
+
     /**
      * Endpoint constructor.
      * @param Container $container
-     * @throws \Interop\Container\Exception\ContainerException
+     * @throws ContainerException
      */
     public function __construct(Container $container)
     {
@@ -40,10 +47,6 @@ abstract class Endpoint
      * @param int $status
      * @param array $headers
      * @return Response
-     * @throws \Interop\Container\Exception\ContainerException
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      */
     public function json(
         array $data,
@@ -63,10 +66,10 @@ abstract class Endpoint
      * @param array $args
      * @return string
      *
-     * @throws \Interop\Container\Exception\ContainerException
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws ContainerException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function render(string $file, array $args = []): string
     {
@@ -98,6 +101,19 @@ abstract class Endpoint
     }
 
     /**
+     * @param string $name
+     * @return Splice
+     */
+    public function splice(string $name): Splice
+    {
+        if (!isset($this->splices[$name])) {
+            $className = 'Soatok\\Canis\\Splices\\' . $name;
+            $this->splices[$name] = new $className($this->container);
+        }
+        return $this->splices[$name];
+    }
+
+    /**
      * Create Stream object from string
      *
      * @param string $input
@@ -116,10 +132,10 @@ abstract class Endpoint
      * @param int $status
      * @param array $headers
      * @return Response
-     * @throws \Interop\Container\Exception\ContainerException
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws ContainerException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function view(
         string $file,
