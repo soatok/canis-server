@@ -13,9 +13,10 @@
     ],
     "require": {
         "php": "^7.3",
-        "soatok/dhole-cryptography": "^1",
         "monolog/monolog": "^1.17",
+        "paragonie/csp-builder": "^2",
         "slim/slim": "^3.1",
+        "soatok/dhole-cryptography": "^1",
         "twig/twig": "^2"
     },
     "require-dev": {

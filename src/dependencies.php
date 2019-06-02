@@ -2,12 +2,17 @@
 
 use Slim\App;
 use Slim\Container;
+use ParagonIE\CSPBuilder\CSPBuilder;
 use Soatok\Canis\Utility;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 return function (App $app) {
     $container = $app->getContainer();
+
+    $container['csp'] = function (Container $c) {
+        return CSPBuilder::fromFile(__DIR__ . '/content_security_policy.json');
+    };
 
     // monolog
     $container['logger'] = function (Container $c) {

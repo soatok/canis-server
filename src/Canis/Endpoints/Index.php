@@ -14,6 +14,7 @@ class Index extends Endpoint
 {
     public function __invoke(RequestInterface $request): ResponseInterface
     {
+        $this->cspBuilder->addSource('script-src', 'https://twitch.tv');
         return $this->view('index.twig');
     }
 }

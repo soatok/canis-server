@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Soatok\Canis;
 
+use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
@@ -20,14 +21,20 @@ abstract class Endpoint
     /** @var Container $container */
     protected $container;
 
+    /** @var CSPBuilder $cspBuilder */
+    protected $cspBuilder;
+
     /**
      * Endpoint constructor.
      * @param Container $container
+     * @throws \Interop\Container\Exception\ContainerException
      */
     public function __construct(Container $container)
     {
         $this->container = $container;
+        $this->cspBuilder = $this->container->get('csp');
     }
+
     /**
      * @param string $file
      * @param array $args
@@ -58,10 +65,12 @@ abstract class Endpoint
         int $status = StatusCode::HTTP_OK,
         array $headers = []
     ): Response {
-        return new Response(
-            $status,
-            new Headers($headers),
-            $this->stream($body)
+        return $this->cspBuilder->injectCSPHeader(
+            new Response(
+                $status,
+                new Headers($headers),
+                $this->stream($body)
+            )
         );
     }
 
@@ -95,6 +104,7 @@ abstract class Endpoint
         int $status = StatusCode::HTTP_OK,
         array $headers = []
     ): Response {
+        $headers['Content-Type'] = 'text/html';
         return $this->respond(
             $this->render($file, $args),
             $status,

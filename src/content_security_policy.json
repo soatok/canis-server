@@ -1,0 +1,8 @@
+{
+  "report-only": false,
+  "script-src": {
+    "allow": [
+      "https://youtube.com"
+    ]
+  }
+}
