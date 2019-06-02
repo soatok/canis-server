@@ -8,6 +8,8 @@ if (PHP_SAPI == 'cli-server') {
         return false;
     }
 }
+define('CANIS_ROOT', dirname(__DIR__));
+define('CANIS_PUBLIC', __DIR__);
 
 require __DIR__ . '/../vendor/autoload.php';
 

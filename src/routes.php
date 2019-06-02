@@ -1,17 +1,17 @@
 <?php
+namespace Soatok\Canis\Endpoints;
 
 use Slim\App;
-use Slim\Http\Request;
-use Slim\Http\Response;
+use Slim\Container;
 
 return function (App $app) {
+    /** @var Container $container */
     $container = $app->getContainer();
 
-    $app->get('/[{name}]', function (Request $request, Response $response, array $args) use ($container) {
-        // Sample log message
-        $container->get('logger')->info("Slim-Skeleton '/' route");
+    $app->get('/', 'index');
+    $app->get('', 'index');
 
-        // Render index view
-        return $container->get('renderer')->render($response, 'index.phtml', $args);
-    });
+    $container['index'] = function () use ($container) {
+        return new Index($container);
+    };
 };
