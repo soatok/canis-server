@@ -36,6 +36,29 @@ abstract class Endpoint
     }
 
     /**
+     * @param array $data
+     * @param int $status
+     * @param array $headers
+     * @return Response
+     * @throws \Interop\Container\Exception\ContainerException
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function json(
+        array $data,
+        int $status = StatusCode::HTTP_OK,
+        array $headers = []
+    ): Response {
+        $headers['Content-Type'] = 'application/json';
+        return $this->respond(
+            json_encode($data, JSON_PRETTY_PRINT),
+            $status,
+            $headers
+        );
+    }
+
+    /**
      * @param string $file
      * @param array $args
      * @return string
