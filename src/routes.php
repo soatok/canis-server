@@ -11,7 +11,7 @@ return function (App $app) {
     $guestsOnly = new GuestsOnly($container);
 
 
-    $app->get('/auth/{action:[^/]+}[/{extra:[^/]+}]', 'authorize');
+    $app->any('/auth/{action:[^/]+}[/{extra:[^/]+}]', 'authorize');
     $app->get('/api', 'api-index');
     $app->get('/', 'index');
     $app->get('', 'index');

@@ -1,0 +1,10 @@
+body {
+    background-color: #eee;
+    color: #000;
+}
+.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-radius: 0.33rem;
+    color: #300;
+    padding: 0.5rem;
+}

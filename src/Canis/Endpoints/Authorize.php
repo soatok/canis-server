@@ -117,16 +117,39 @@ class Authorize extends Endpoint
     ): ResponseInterface {
         // Do we have valid data?
         $post = $this->post($request);
+        $errors = [];
         if (!empty($post)) {
-            $userId = $this->accounts->createAccount(
-                $post['username'],
-                new HiddenString($post['password'])
-            );
-            if ($userId) {
-                $this->view('register-success');
+            if (empty($post['login'])) {
+                $errors []= 'Username must be provided';
+            }
+
+            if (empty($post['password'])) {
+                $errors []= 'Passphrase must be provided';
+            }
+
+            if (empty($post['email'])) {
+                $errors []= 'Email address must be provided';
+            } elseif (strpos($post['email'], '@') === false) {
+                $errors []= 'Not a valid email address';
+            }
+
+            if (empty($errors)) {
+                // Create the account:
+                $userId = $this->accounts->createAccount(
+                    $post['login'],
+                    new HiddenString($post['password'])
+                );
+                if ($userId) {
+                    $this->accounts->sendActivationEmail($userId);
+                    $this->view('register-success.twig');
+                } else {
+                    $this->setTwigVar('errors', ['Registration unsuccessful']);
+                }
+            } else {
+                $this->setTwigVar('errors', $errors);
             }
         }
-        return $this->view('register', ['post' => $post]);
+        return $this->view('register.twig', ['post' => $post]);
     }
 
     /**

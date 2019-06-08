@@ -9,7 +9,9 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 return function (App $app) {
+    /** @var Container $container */
     $container = $app->getContainer();
+    Utility::setContainer($container);
 
     $container['csp'] = function (Container $c) {
         return CSPBuilder::fromFile(__DIR__ . '/content_security_policy.json');

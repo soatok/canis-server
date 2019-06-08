@@ -3,6 +3,8 @@ declare(strict_types=1);
 namespace Soatok\Canis;
 
 use ParagonIE\ConstantTime\Base64UrlSafe;
+use ParagonIE\CSPBuilder\CSPBuilder;
+use Slim\Container;
 use Twig\Environment;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -13,14 +15,26 @@ use Twig\TwigFunction;
  */
 abstract class Utility
 {
+    private static $container;
+
+    /**
+     * @param Container $container
+     */
+    public static function setContainer(Container $container)
+    {
+        self::$container = $container;
+    }
+
     /**
      * Customize our Twig\Environment object
      *
      * @param Environment $env
      * @return Environment
      */
-    static public function terraform(Environment $env): Environment
+    public static function terraform(Environment $env): Environment
     {
+        $container = self::$container;
+
         /**
          * @twig-filter cachebust
          * Usage: {{ "/static/main.css"|cachebust }}
@@ -49,6 +63,17 @@ abstract class Utility
                         '" />';
                 },
                 ['is_safe' => ['html']]
+            )
+        );
+
+        $env->addFunction(
+            new TwigFunction(
+                'csp_nonce',
+                function (string $directive = 'script-src') use ($container) {
+                    /** @var CSPBuilder $csp */
+                    $csp = $container->get('csp');
+                    return $csp->nonce($directive);
+                }
             )
         );
 

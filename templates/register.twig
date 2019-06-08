@@ -1,0 +1,57 @@
+{% extends "base.twig" %}
+{% block contents %}
+
+<h2>Account Registration</h2>
+{% if errors %}
+    {% for error in errors %}<p class="error">Error: {{ error }}</p>{% endfor %}
+{% endif %}
+<form method="post" id="register-form">{{ anti_csrf() }}
+    <label for="login">Username:</label>
+    <input
+        class="form-control"
+        id="login"
+        name="login"
+        placeholder="johndoe123"
+        required="required"
+        type="text"
+        value="{{ post.login|e('html_attr') }}"
+    />
+
+    <label for="password">Passphrase:</label>
+    <input
+        class="form-control"
+        id="password"
+        name="password"
+        placeholder="Recommended: 20+ characters long"
+        required="required"
+        type="password"
+    />
+    <small id="passwordHelp" class="form-text form-error"></small>
+
+    <label for="email">Email Address:</label>
+    <input
+        class="form-control"
+        id="email"
+        name="email"
+        placeholder="johndoe123@gmail.com"
+        required="required"
+        type="email"
+        value="{{ post.email|e('html_attr') }}"
+    />
+
+    <hr />
+
+    <button id="register-btn" class="btn form-control btn-primary" type="submit">Register</button>
+</form>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script {#
+    #}src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.4.2/zxcvbn.js" {#
+    #}integrity="sha256-Znf8FdJF85f1LV0JmPOob5qudSrns8pLPZ6qkd/+F0o=" {#
+    #}crossorigin="anonymous"
+></script>
+<script nonce="{{ csp_nonce('script-src') }}" src="/static/register.js"></script>
+{% endblock %}
+

@@ -87,6 +87,17 @@ class Accounts extends Splice
     }
 
     /**
+     * @param int $accountId
+     * @todo Integrate with Zend\Mail
+     */
+    public function sendActivationEmail(int $accountId): void
+    {
+        // Create/store token in database
+        // Create email body from template file
+        // Send email to user
+    }
+
+    /**
      * Create and return a device token which allows two-factor authentication
      * to be bypassed for up to [policy-determined, default 30] days.
      *
