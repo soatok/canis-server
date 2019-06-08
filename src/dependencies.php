@@ -40,4 +40,8 @@ return function (App $app) {
         $twig = new Environment($loader);
         return Utility::terraform($twig);
     };
+
+    if (empty($_SESSION['anti-csrf'])) {
+        $_SESSION['anti-csrf'] = random_bytes(33);
+    }
 };

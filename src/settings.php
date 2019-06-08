@@ -10,6 +10,10 @@ return [
         'displayErrorDetails' => true, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
+        'password-key' => $localSettings['settings']['password-key']
+                ??
+            $keyring->load('symmetricuqQ7y5xejxCE7osGYD8UVej6r3OeIkGz8hPKxRn8E7Tq5HSePLYdCXS1luOiq18J'),
+
         'database' => $localSettings['settings']['database'] ?? [],
 
         // Monolog settings

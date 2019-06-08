@@ -4,7 +4,7 @@ namespace Soatok\Canis\Endpoints\API;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Soatok\Canis\Endpoint;
+use Soatok\AnthroKit\Endpoint;
 
 /**
  * Class Index
@@ -12,8 +12,17 @@ use Soatok\Canis\Endpoint;
  */
 class Index extends Endpoint
 {
-    public function __invoke(RequestInterface $request): ResponseInterface
-    {
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface|null $response
+     * @param array $routerParams
+     * @return ResponseInterface
+     */
+    public function __invoke(
+        RequestInterface $request,
+        ?ResponseInterface $response = null,
+        array $routerParams = []
+    ): ResponseInterface {
         return $this->json([
             'test' => 'hello world',
             'test2' => get_class($this->splice('Accounts'))

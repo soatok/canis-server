@@ -15,11 +15,13 @@
         "php": "^7.3",
         "ext-json": "*",
         "ext-sodium": "*",
+        "kelunik/two-factor": "^1",
         "monolog/monolog": "^1.17",
         "paragonie/csp-builder": "^2",
         "paragonie/easydb": "^2",
         "slim/slim": "^3.1",
         "soatok/dhole-cryptography": "^1",
+        "soatok/anthrokit": "^0|^1",
         "twig/twig": "^2"
     },
     "require-dev": {

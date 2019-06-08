@@ -2,9 +2,17 @@
 declare(strict_types=1);
 namespace Soatok\Canis\Endpoints;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Soatok\Canis\Endpoint;
+use Interop\Container\Exception\ContainerException;
+use Psr\Http\Message\{
+    RequestInterface,
+    ResponseInterface
+};
+use Soatok\AnthroKit\Endpoint;
+use Twig\Error\{
+    LoaderError,
+    RuntimeError,
+    SyntaxError
+};
 
 /**
  * Class Index
@@ -12,9 +20,21 @@ use Soatok\Canis\Endpoint;
  */
 class Index extends Endpoint
 {
-    public function __invoke(RequestInterface $request): ResponseInterface
-    {
-        $this->cspBuilder->addSource('script-src', 'https://twitch.tv');
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface|null $response
+     * @param array $routerParams
+     * @return ResponseInterface
+     * @throws ContainerException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
+    public function __invoke(
+        RequestInterface $request,
+        ?ResponseInterface $response = null,
+        array $routerParams = []
+    ): ResponseInterface {
         return $this->view('index.twig');
     }
 }

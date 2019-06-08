@@ -5,6 +5,7 @@ namespace Soatok\Canis;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use Twig\Environment;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 /**
  * Class Utility
@@ -37,6 +38,17 @@ abstract class Utility
 
                     return $filePath . '?' . Base64UrlSafe::encode($sha384);
                 }
+            )
+        );
+        $env->addFunction(
+            new TwigFunction(
+                'anti_csrf',
+                function () {
+                    return '<input type="hidden" name="csrf-protect" value="' .
+                        Base64UrlSafe::encode($_SESSION['anti-csrf']) .
+                        '" />';
+                },
+                ['is_safe' => ['html']]
             )
         );
 
