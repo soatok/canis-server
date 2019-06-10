@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS canis_accounts (
     login TEXT UNIQUE, -- username
     pwhash TEXT UNIQUE, -- encrypted argon2id hash
     twofactor TEXT, -- encrypted two factor auth shared secret
+    active BOOLEAN DEFAULT FALSE,
+    email_activation TEXT,
     created TIMESTAMP DEFAULT NOW(),
     modified TIMESTAMP
 );
