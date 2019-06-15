@@ -20,7 +20,7 @@ class GuestsOnly extends Middleware
         ResponseInterface $response,
         callable $next
     ): MessageInterface {
-        if (!empty($_SESSION['user_id'])) {
+        if (!empty($_SESSION['account_id'])) {
             header('Location: /');
             exit;
         }

@@ -7,13 +7,19 @@ use ParagonIE\EasyDB\Factory;
 use Soatok\Canis\Utility;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Zend\Mail\Transport\{
+    Sendmail,
+    Smtp,
+    SmtpOptions,
+    TransportInterface
+};
 
 return function (App $app) {
     /** @var Container $container */
     $container = $app->getContainer();
     Utility::setContainer($container);
 
-    $container['csp'] = function (Container $c) {
+    $container['csp'] = function (Container $c): CSPBuilder {
         return CSPBuilder::fromFile(__DIR__ . '/content_security_policy.json');
     };
 
@@ -28,7 +34,7 @@ return function (App $app) {
     };
 
     // monolog
-    $container['logger'] = function (Container $c) {
+    $container['logger'] = function (Container $c): \Monolog\Logger {
         $settings = $c->get('settings')['logger'];
         $logger = new \Monolog\Logger($settings['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
@@ -36,11 +42,26 @@ return function (App $app) {
         return $logger;
     };
 
+    $container['mailer'] = function (Container $c): TransportInterface {
+        $settings = $c->get('settings')['email'] ?? [];
+        switch ($settings['transport']) {
+            case 'smtp':
+                return new Smtp(
+                    new SmtpOptions($settings['options'] ?? [])
+                );
+            default:
+                return new Sendmail();
+        }
+    };
+
     $container['twig'] = function (Container $c): Environment {
-        $settings = $c->get('settings')['twig'];
-        $loader = new FilesystemLoader($settings['template_paths']);
-        $twig = new Environment($loader);
-        return Utility::terraform($twig);
+        static $twig = null;
+        if (!$twig) {
+            $settings = $c->get('settings')['twig'];
+            $loader = new FilesystemLoader($settings['template_paths']);
+            $twig = Utility::terraform(new Environment($loader));
+        }
+        return $twig;
     };
 
     if (empty($_SESSION['anti-csrf'])) {

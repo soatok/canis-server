@@ -43,6 +43,12 @@ class Authorize extends Endpoint
      * @param ResponseInterface|null $response
      * @param array $routerParams
      * @return ResponseInterface
+     *
+     * @throws ContainerException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws \SodiumException
      */
     public function __invoke(
         RequestInterface $request,
@@ -61,7 +67,7 @@ class Authorize extends Endpoint
             case 'logout':
                 return $this->logout($request, $routerParams);
             case 'register':
-                return $this->register($request, $routerParams);
+                return $this->register($request);
             case 'verify':
                 return $this->verify($request, $routerParams);
             default:
@@ -108,13 +114,16 @@ class Authorize extends Endpoint
 
     /**
      * @param RequestInterface $request
-     * @param array $routerParams
      * @return ResponseInterface
+     *
+     * @throws ContainerException
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws \SodiumException
      */
-    protected function register(
-        RequestInterface $request,
-        array $routerParams = []
-    ): ResponseInterface {
+    protected function register(RequestInterface $request): ResponseInterface
+    {
         // Do we have valid data?
         $post = $this->post($request);
         $errors = [];
@@ -135,12 +144,13 @@ class Authorize extends Endpoint
 
             if (empty($errors)) {
                 // Create the account:
-                $userId = $this->accounts->createAccount(
+                $accountId = $this->accounts->createAccount(
                     $post['login'],
                     new HiddenString($post['password'])
                 );
-                if ($userId) {
-                    $this->accounts->sendActivationEmail($userId);
+                if ($accountId) {
+                    $_SESSION['account_id'] = $accountId;
+                    $this->accounts->sendActivationEmail($accountId);
                     $this->view('register-success.twig');
                 } else {
                     $this->setTwigVar('errors', ['Registration unsuccessful']);
@@ -163,5 +173,4 @@ class Authorize extends Endpoint
     ): ResponseInterface {
         return $this->json($routerParams);
     }
-
 }

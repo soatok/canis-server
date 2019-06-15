@@ -11,6 +11,9 @@ use Soatok\DholeCrypto\Exceptions\CryptoException;
 use Soatok\DholeCrypto\Key\SymmetricKey;
 use Soatok\DholeCrypto\Password;
 use SodiumException;
+use Twig\Environment;
+use Zend\Mail\Message;
+use Zend\Mail\Transport\TransportInterface;
 
 /**
  * Class Accounts
@@ -18,13 +21,21 @@ use SodiumException;
  */
 class Accounts extends Splice
 {
+    /** @var TransportInterface $mailer */
+    private $mailer;
+
     /** @var SymmetricKey $passwordKey */
     private $passwordKey;
+
+    /** @var Environment $twig */
+    private $twig;
 
     public function __construct(Container $container)
     {
         parent::__construct($container);
+        $this->mailer = $container['mailer'];
         $this->passwordKey = $container->get('settings')['password-key'];
+        $this->twig = $container->get('twig');
     }
 
     /**
@@ -88,13 +99,58 @@ class Accounts extends Splice
 
     /**
      * @param int $accountId
-     * @todo Integrate with Zend\Mail
+     * @return void
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function sendActivationEmail(int $accountId): void
     {
         // Create/store token in database
         // Create email body from template file
         // Send email to user
+        $this->db->beginTransaction();
+        $token = Base32::encode(random_bytes(40));
+        $this->db->update(
+            'canis_accounts',
+            [
+                'email_activation' => $token
+            ],
+            [
+                'accountid' => $accountId
+            ]
+        );
+        if (!$this->db->commit()) {
+            $this->db->rollBack();
+            throw new \Exception('Could not write to database');
+        }
+        $this->sendEmail(
+            $accountId,
+            'Complete Your Registration',
+            $this->twig->render(
+                'email/activate.twig',
+                ['token' => $token]
+            )
+        );
+    }
+
+    /**
+     * @param int $accountId
+     * @param string $subject
+     * @param string $body
+     */
+    public function sendEmail(int $accountId, string $subject, string $body): void
+    {
+        $email = $this->db->cell(
+            'SELECT email FROM canis_accounts WHERE accountid = ?',
+            $accountId
+        );
+
+        $message = new Message();
+        $message->setTo($email);
+        $message->setSubject($subject);
+        $message->setBody($body);
+        $this->mailer->send($message);
     }
 
     /**
@@ -133,20 +189,24 @@ class Accounts extends Splice
     {
         $selector = Binary::safeSubstr($token, 0, 32);
         $validator = Binary::safeSubstr($token, 32);
-
         $hashed = \sodium_crypto_generichash(
             \ParagonIE_Sodium_Core_Util::store64_le($accountId) .
             Base32::decode($selector),
             Base32::decode($validator)
         );
 
-        // TODO: Expiration time
+        // 30-day expiration
+        $expires = (new \DateTime())
+            ->sub(new \DateInterval('P30D'))
+            ->format(\DateTime::ATOM);
+
         $stored = $this->db->cell(
             "SELECT validator 
             FROM canis_account_known_device
-            WHERE selector = ? AND accountid = ?",
+            WHERE selector = ? AND accountid = ? AND created >= ?",
             $selector,
-            $accountId
+            $accountId,
+            $expires
         );
 
         return hash_equals(Base32::decode($stored), $hashed);
