@@ -3,13 +3,16 @@ namespace Soatok\Canis\Endpoints;
 
 use Slim\App;
 use Slim\Container;
-use Soatok\Canis\Middleware\GuestsOnly;
+use Soatok\AnthroKit\Auth\Middleware\{
+    AuthorizedUsersOnly,
+    GuestsOnly
+};
 
 return function (App $app) {
     /** @var Container $container */
     $container = $app->getContainer();
     $guestsOnly = new GuestsOnly($container);
-
+    $authOnly = new AuthorizedUsersOnly($container);
 
     $app->any('/auth/{action:[^/]+}[/{extra:[^/]+}]', 'authorize');
     $app->get('/api', 'api-index');

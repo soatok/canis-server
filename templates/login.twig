@@ -1,0 +1,37 @@
+{% extends "base.twig" %}
+{% block contents %}
+
+    <h2>Log In</h2>
+    {% if errors %}
+        {% for error in errors %}<p class="error">Error: {{ error }}</p>{% endfor %}
+    {% endif %}
+    <form method="post" id="login-form">{{ anti_csrf() }}
+        <label for="login">Username:</label>
+        <input
+            class="form-control"
+            id="login"
+            name="login"
+            placeholder="johndoe123"
+            required="required"
+            type="text"
+            value="{{ post.login|e('html_attr') }}"
+        />
+
+        <label for="password">Passphrase:</label>
+        <input
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Recommended: 20+ characters long"
+            required="required"
+            type="password"
+        />
+
+        <hr />
+
+        <button id="register-btn" class="btn form-control btn-primary" type="submit">Log In</button>
+    </form>
+    <hr />
+    <a href="/auth/register">Create Account</a>
+{% endblock %}
+
