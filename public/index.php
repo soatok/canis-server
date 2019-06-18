@@ -13,7 +13,7 @@ define('CANIS_PUBLIC', __DIR__);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-session_start();
+session_start(['cookie_samesite' => 'Strict']);
 
 // Instantiate the app
 $settings = require __DIR__ . '/../src/settings.php';
