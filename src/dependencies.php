@@ -44,6 +44,9 @@ return function (App $app) {
 
     $container['mailer'] = function (Container $c): TransportInterface {
         $settings = $c->get('settings')['email'] ?? [];
+        if (empty($settings['transport'])) {
+            $settings['transport'] = null;
+        }
         switch ($settings['transport']) {
             case 'smtp':
                 return new Smtp(

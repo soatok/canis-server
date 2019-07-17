@@ -21,5 +21,3 @@ CREATE TABLE IF NOT EXISTS canis_account_known_device (
     validator TEXT,
     created TIMESTAMP DEFAULT NOW()
 );
-
-

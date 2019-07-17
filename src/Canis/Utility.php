@@ -2,9 +2,11 @@
 declare(strict_types=1);
 namespace Soatok\Canis;
 
+use Interop\Container\Exception\ContainerException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Slim\Container;
+use Soatok\AnthroKit\Auth\Fursona;
 use Twig\Environment;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -15,6 +17,7 @@ use Twig\TwigFunction;
  */
 abstract class Utility
 {
+    /** @var Container $container */
     private static $container;
 
     /**
@@ -30,6 +33,7 @@ abstract class Utility
      *
      * @param Environment $env
      * @return Environment
+     * @throws ContainerException
      */
     public static function terraform(Environment $env): Environment
     {
@@ -39,6 +43,14 @@ abstract class Utility
          * @twig-filter cachebust
          * Usage: {{ "/static/main.css"|cachebust }}
          */
+        $env->addFunction(
+            new TwigFunction(
+                'authorized',
+                function () {
+                    return !empty($_SESSION['account_id']);
+                }
+            )
+        );
         $env->addFilter(
             new TwigFilter(
                 'cachebust',
@@ -65,17 +77,45 @@ abstract class Utility
                 ['is_safe' => ['html']]
             )
         );
+        $env->addFunction(
+            new TwigFunction(
+                'anti_csrf_ajax',
+                function () {
+                    return Base64UrlSafe::encode($_SESSION['anti-csrf']);
+                },
+                ['is_safe' => ['html', 'html_attr']]
+            )
+        );
 
         $env->addFunction(
             new TwigFunction(
                 'csp_nonce',
                 function (string $directive = 'script-src') use ($container) {
                     /** @var CSPBuilder $csp */
-                    $csp = $container->get('csp');
+                    $csp = Utility::$container['csp'];
                     return $csp->nonce($directive);
                 }
             )
         );
+
+        $env->addFunction(
+            new TwigFunction(
+                'clear_message_once',
+                function () {
+                    $_SESSION['message_once'] = [];
+                }
+            )
+        );
+
+        $env->addFilter(new TwigFilter('ucfirst', 'ucfirst'));
+
+        $settings = $container['settings']['twig-custom'] ?? [];
+        $env->addGlobal('canis_custom', $settings);
+        $env->addGlobal('theme_id', null);
+        $env->addGlobal('anthrokit', $container->get(Fursona::CONTAINER_KEY));
+        $env->addGlobal('canis_settings', $container->get('settings'));
+
+        $env->addGlobal('session', $_SESSION);
 
         return $env;
     }

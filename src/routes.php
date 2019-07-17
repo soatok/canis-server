@@ -14,7 +14,17 @@ return function (App $app) {
     $guestsOnly = new GuestsOnly($container);
     $authOnly = new AuthorizedUsersOnly($container);
 
-    $app->any('/auth/{action:[^/]+}[/{extra:[^/]+}]', 'authorize');
+    $app->group('/manage', function() use ($app, $container) {
+
+    })->add($authOnly);
+    // Only authenticated users can logout:
+    $app->any('/auth/{action:logout}[/{extra:[^/]+}]', 'authorize')
+        ->add($authOnly);
+    // Only guests can do this:
+    $app->any('/auth/{action:register|invite|login|twitter|verify}[/{extra:[^/]+}]', 'authorize')
+        ->add($guestsOnly);
+    // No middleware on activation:
+    $app->any('/auth/{action:activate}[/{extra:[^/]+}]', 'authorize');
     $app->get('/api', 'api-index');
     $app->get('/', 'index');
     $app->get('', 'index');
