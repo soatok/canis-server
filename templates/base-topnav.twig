@@ -2,4 +2,8 @@
     <img class="nav-logo" src="/static/canis-64.png" alt="Logo: " />
     Project Canis
 </a>
-<a class="nav-link" href="/auth/login">Login</a>
+{% if authorized() %}
+{% else %}
+    <a class="nav-link" href="/auth/login">Login</a>
+    <a class="nav-link" href="/auth/register">Sign Up</a>
+{% endif %}
