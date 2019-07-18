@@ -21,6 +21,7 @@ $anthrokit =[
         'register' => '/auth/register',
         'twitter' => '/auth/twitter',
         'twitter-error' => '/generic-error/twitter-error',
+        'two-factor' => '/auth/verify',
     ],
     'require-invite-register' => false,
     'sql' => [

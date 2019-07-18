@@ -1,0 +1,28 @@
+{% extends "base.twig" %}
+
+{% block contents %}
+    <form method="post">
+        {{ anti_csrf() }}
+        <label for="two-factor">
+            Please enter a code from your two-factor authentication device
+            to continue logging in:
+        </label>
+        <input
+            class="form-control"
+            id="two-factor"
+            name="code"
+            type="text"
+            placeholder="000000"
+            autocomplete="false"
+        />
+        <input
+            id="remember-device"
+            name="remember-device"
+            type="checkbox"
+        />
+        <label for="remember-device">
+            Remember this device for 30 days?
+        </label>
+        <button type="submit" class="form-control btn btn-primary">Authenticate</button>
+    </form>
+{% endblock %}

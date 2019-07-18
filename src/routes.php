@@ -15,7 +15,8 @@ return function (App $app) {
     $authOnly = new AuthorizedUsersOnly($container);
 
     $app->group('/manage', function() use ($app, $container) {
-
+        $app->get('/', 'manage-index');
+        $app->get('', 'manage-index');
     })->add($authOnly);
 
     $app->get('/api/vendors/{action:[^/]+}/{param:[^/]+}', 'api-vendors');
@@ -43,6 +44,9 @@ return function (App $app) {
     };
     $container['api-vendors'] = function () use ($container) {
         return new API\Vendors($container);
+    };
+    $container['manage-index'] = function () use ($container) {
+        return new Manage\Index($container);
     };
     $container['authorize'] = function () use ($container) {
         return new Authorize($container);
