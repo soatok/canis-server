@@ -31,6 +31,7 @@
     <nav class="nav" id="top-nav">{% block topnav %}{% include "base-topnav.twig" %}{% endblock %}</nav>
     <div id="main" class="container">
         {% block main %}
+            {% include "snippet/message-once.twig" %}
             {% block contents %}{% endblock %}
         {% endblock %}
     </div>

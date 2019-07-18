@@ -5,6 +5,15 @@
     {% if errors %}
         {% for error in errors %}<p class="error">Error: {{ error }}</p>{% endfor %}
     {% endif %}
+
+    {% if anthrokit['allow-twitter-auth'] %}
+        <p>
+            <a href="/auth/twitter" class="btn btn-verydark">
+                <i class="fab fa-twitter"></i>
+                Login with Twitter
+            </a>
+        </p>
+    {% endif %}
     <form method="post" id="login-form">{{ anti_csrf() }}
         <label for="login">Username:</label>
         <input

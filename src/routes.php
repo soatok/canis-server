@@ -25,6 +25,7 @@ return function (App $app) {
         ->add($guestsOnly);
     // No middleware on activation:
     $app->any('/auth/{action:activate}[/{extra:[^/]+}]', 'authorize');
+    $app->any('/generic-error[/{error:[^/]+}]', 'error');
     $app->get('/api', 'api-index');
     $app->get('/', 'index');
     $app->get('', 'index');
@@ -37,5 +38,8 @@ return function (App $app) {
     };
     $container['authorize'] = function () use ($container) {
         return new Authorize($container);
+    };
+    $container['error'] = function (Container $c) {
+        return new GenericError($c);
     };
 };

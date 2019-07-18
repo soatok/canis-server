@@ -15,8 +15,6 @@ body {
 #top-nav {
     background-color: rgba(0, 0, 0, 0.05);
 }
-
-
 html {
     position: relative;
     min-height: 100%;
@@ -39,4 +37,7 @@ footer {
     font-size: 200%;
     margin-left: 0.5ex;
     transition: background-color 0.2s, color 0.2s;
+}
+#main {
+    padding: 0.5rem 15px;
 }
