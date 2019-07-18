@@ -2,7 +2,9 @@
 declare(strict_types=1);
 namespace Soatok\Canis;
 
+use GuzzleHttp\Client;
 use Interop\Container\Exception\ContainerException;
+use ParagonIE\Certainty\RemoteFetch;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\ResponseInterface;

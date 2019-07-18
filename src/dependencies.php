@@ -10,6 +10,7 @@ use ParagonIE\Sapient\CryptographyKeys\{
     SigningPublicKey,
     SigningSecretKey
 };
+use Soatok\AnthroKit\Utility as AnthroKitUtil;
 use Soatok\Canis\Utility;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -75,7 +76,8 @@ return function (App $app) {
             $settings['url'],
             $settings['client-id'],
             $publicKey,
-            $secretKey
+            $secretKey,
+            AnthroKitUtil::getHttpClient(CANIS_ROOT . '/local/certs')
         );
     };
 

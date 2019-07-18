@@ -2,4 +2,5 @@
 /composer.lock
 /local
 !/local/.gitkeep
+!/local/certs/.gitkeep
 /vendor

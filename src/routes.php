@@ -17,6 +17,11 @@ return function (App $app) {
     $app->group('/manage', function() use ($app, $container) {
 
     })->add($authOnly);
+
+    $app->get('/api/vendors/{action:[^/]+}/{param:[^/]+}', 'api-vendors');
+    $app->get('/api/vendors/{action:[^/]+}', 'api-vendors');
+    $app->get('/api/vendors', 'api-vendors');
+
     // Only authenticated users can logout:
     $app->any('/auth/{action:logout}[/{extra:[^/]+}]', 'authorize')
         ->add($authOnly);
@@ -35,6 +40,9 @@ return function (App $app) {
     };
     $container['api-index'] = function () use ($container) {
         return new API\Index($container);
+    };
+    $container['api-vendors'] = function () use ($container) {
+        return new API\Vendors($container);
     };
     $container['authorize'] = function () use ($container) {
         return new Authorize($container);

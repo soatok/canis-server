@@ -24,8 +24,7 @@ class Index extends Endpoint
         array $routerParams = []
     ): ResponseInterface {
         return $this->json([
-            'test' => 'hello world',
-            'test2' => get_class($this->splice('Accounts'))
+
         ]);
     }
 }
