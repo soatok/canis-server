@@ -2,8 +2,14 @@
 
 use Slim\App;
 use Slim\Container;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use ParagonIE\EasyDB\Factory;
+use ParagonIE\Quill\Quill;
+use ParagonIE\Sapient\CryptographyKeys\{
+    SigningPublicKey,
+    SigningSecretKey
+};
 use Soatok\Canis\Utility;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -55,6 +61,22 @@ return function (App $app) {
             default:
                 return new Sendmail();
         }
+    };
+
+    $container['quill'] = function (Container $c) {
+        $settings = $c->get('settings')['chronicle'];
+        $publicKey = new SigningPublicKey(
+            Base64UrlSafe::decode($settings['server-public-key'])
+        );
+        $secretKey = new SigningSecretKey(
+            Base64UrlSafe::decode($settings['client-secret-key'])
+        );
+        return new Quill(
+            $settings['url'],
+            $settings['client-id'],
+            $publicKey,
+            $secretKey
+        );
     };
 
     $container['twig'] = function (Container $c): Environment {

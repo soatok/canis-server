@@ -6,6 +6,7 @@ $keyring = new Keyring();
 $anthrokit =[
     'allow-password-auth' => true,
     'allow-twitter-auth' => false,
+    'chronicle' => [],
     'redirect' => [
         'account-banned' => '/generic-error/account-banned',
         'auth-success' => '/',

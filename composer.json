@@ -19,6 +19,7 @@
         "monolog/monolog": "^1.17",
         "paragonie/csp-builder": "^2",
         "paragonie/easydb": "^2",
+        "paragonie/quill": "^0|^1",
         "slim/slim": "^3.1",
         "soatok/anthrokit": "^0|^1",
         "soatok/anthrokit-auth": "^0|^1",

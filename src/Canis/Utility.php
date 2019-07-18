@@ -5,6 +5,7 @@ namespace Soatok\Canis;
 use Interop\Container\Exception\ContainerException;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use ParagonIE\CSPBuilder\CSPBuilder;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Container;
 use Soatok\AnthroKit\Auth\Fursona;
 use Twig\Environment;
@@ -26,6 +27,20 @@ abstract class Utility
     public static function setContainer(Container $container)
     {
         self::$container = $container;
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return array
+     */
+    public static function getResponseJson(ResponseInterface $response): array
+    {
+        $data = (string) $response->getBody();
+        $decoded = json_decode($data, true);
+        if (!is_array($decoded)) {
+            return [];
+        }
+        return $decoded;
     }
 
     /**

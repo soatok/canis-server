@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS canis_package_releases (
     publickeyid BIGINT REFERENCES canis_vendor_public_keys (publickeyid),
     fileid BIGINT REFERENCES canis_files (fileid),
     signature TEXT, -- Digital signature
-    chronicle_data TEXT, -- BLAKE2b hash of .zip bundle, git/svn version info, etc.
+    chronicle_data TEXT, -- metadata: .zip bundle, git/svn version info, etc.
     chronicle_create TEXT, -- summaryhash from Chronicle instance
     chronicle_revoke TEXT NULL, -- summaryhash from Chronicle instance
     revoked BOOLEAN DEFAULT FALSE,
